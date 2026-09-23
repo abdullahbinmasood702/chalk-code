@@ -87,6 +87,7 @@ html, body {
 
 .field-row { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
 .field-row label { font-size: 0.8rem; color: rgba(241,239,231,0.75); }
+.field-row[hidden] { display: none; }
 
 select, .field-row input[type="text"] {
   background: rgba(241,239,231,0.06);
