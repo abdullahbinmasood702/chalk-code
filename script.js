@@ -1,5 +1,12 @@
 // Tried in order: if a model is busy or unavailable, the next one is used.
-const GEMINI_MODELS = ['gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-3.5-flash-lite'];
+// These models "think" before answering by default, which is slow and not
+// needed for short student code examples, so thinking is set to "low".
+// The Lite model has no thinking setting, so it is left at its default.
+const GEMINI_MODELS = [
+  { name: 'gemini-3.6-flash', thinkingLevel: 'low' },
+  { name: 'gemini-3.7-flash', thinkingLevel: 'low' },
+  { name: 'gemini-3.5-flash-lite', thinkingLevel: null },
+];
 const KEY_STORAGE = 'chalkcode_gemini_key';
 
 const ATTEMPTS_PER_MODEL = 2;
@@ -120,13 +127,18 @@ function wait(ms) {
 async function callGemini(key, prompt) {
   let lastError = new Error('No response from the model. Try again.');
 
-  for (const model of GEMINI_MODELS) {
+  for (const { name, thinkingLevel } of GEMINI_MODELS) {
+    const requestBody = { contents: [{ parts: [{ text: prompt }] }] };
+    if (thinkingLevel) {
+      requestBody.generationConfig = { thinkingConfig: { thinkingLevel } };
+    }
+
     for (let attempt = 0; attempt < ATTEMPTS_PER_MODEL; attempt++) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${name}:generateContent?key=${encodeURIComponent(key)}`;
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+        body: JSON.stringify(requestBody),
       });
 
       if (response.ok) return response.json();
