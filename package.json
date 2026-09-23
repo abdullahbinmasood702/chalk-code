@@ -1,0 +1,13 @@
+{
+  "name": "chalk-code",
+  "version": "1.0.0",
+  "description": "Type a topic and pick a language — get working, explained code. A free, student-focused AI coding helper.",
+  "author": "Abdullah Bin Masood <https://codewithabm.vercel.app/> (Code with ABM)",
+  "license": "MIT",
+  "homepage": "https://<your-username>.github.io/chalk-code/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/<your-username>/chalk-code.git"
+  },
+  "keywords": ["students", "education", "ai", "code-generator", "gemini-api", "learning-tools"]
+}

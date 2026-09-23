@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChalkCode — code for any topic, in any language</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="brand">
+      <img src="assets/logo-mark.svg" alt="ChalkCode logo" class="brand-mark-img">
+      <span class="brand-name">ChalkCode</span>
+    </div>
+    <button id="key-btn" class="key-btn" title="Set your free Gemini API key">API key</button>
+  </header>
+
+  <main class="board">
+
+    <section class="panel panel-board" aria-label="Request">
+      <p class="board-kicker">What are you trying to build?</p>
+      <textarea id="topic" class="topic-input" rows="4"
+        placeholder="e.g. a function that checks if a string is a palindrome"></textarea>
+
+      <div class="field-row">
+        <label for="language">Language</label>
+        <select id="language">
+          <option>Python</option>
+          <option>JavaScript</option>
+          <option>Java</option>
+          <option>C++</option>
+          <option>C</option>
+          <option>C#</option>
+          <option>Go</option>
+          <option>Rust</option>
+          <option>TypeScript</option>
+          <option>PHP</option>
+          <option>Ruby</option>
+          <option>Swift</option>
+          <option>Kotlin</option>
+          <option>SQL</option>
+          <option>R</option>
+          <option>Other (type below)</option>
+        </select>
+      </div>
+
+      <div class="field-row" id="custom-lang-row" hidden>
+        <label for="custom-language">Language name</label>
+        <input id="custom-language" type="text" placeholder="e.g. Haskell">
+      </div>
+
+      <div class="field-row">
+        <label for="level">Level</label>
+        <select id="level">
+          <option value="beginner">Beginner — explain every line</option>
+          <option value="intermediate" selected>Intermediate</option>
+          <option value="advanced">Advanced — concise, idiomatic</option>
+        </select>
+      </div>
+
+      <button id="generate-btn" class="chalk-btn">Write the code</button>
+      <p id="board-status" class="board-status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel panel-paper" aria-label="Result">
+      <div class="paper-head">
+        <span id="paper-filename">answer.txt</span>
+        <div class="paper-actions">
+          <button id="copy-btn" class="ghost-btn" disabled>Copy</button>
+        </div>
+      </div>
+      <pre class="code-frame"><code id="code-output" class="code-output">Fill in the board on the left, then hit &quot;Write the code&quot;.</code></pre>
+      <div id="explanation" class="explanation"></div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    Built by <a href="https://codewithabm.vercel.app/" target="_blank" rel="noopener">Code with ABM</a>, powered by the free <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google Gemini API</a>. Your key stays in your browser only.
+  </footer>
+
+  <dialog id="key-dialog" class="key-dialog">
+    <form method="dialog" id="key-form">
+      <h2>Add your free Gemini API key</h2>
+      <p>Get one at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> — it's free, no card needed. It's saved only in this browser (localStorage), never sent anywhere but Google's API.</p>
+      <input id="key-input" type="password" placeholder="AIza..." autocomplete="off">
+      <div class="key-dialog-actions">
+        <button type="button" id="key-cancel" class="ghost-btn">Cancel</button>
+        <button type="submit" class="chalk-btn small">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+<script src="script.js"></script>
+</body>
+</html>
