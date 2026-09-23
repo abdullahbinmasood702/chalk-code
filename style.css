@@ -98,6 +98,13 @@ select, .field-row input[type="text"] {
   padding: 0.55rem 0.6rem;
 }
 
+select { color-scheme: dark; }
+
+select option {
+  background: var(--chalk-green);
+  color: var(--chalk-white);
+}
+
 .chalk-btn {
   margin-top: 1.5rem;
   width: 100%;
