@@ -1,5 +1,11 @@
-const GEMINI_MODEL = 'gemini-3.6-flash';
+// Tried in order: if a model is busy or unavailable, the next one is used.
+const GEMINI_MODELS = ['gemini-3.6-flash', 'gemini-3.7-flash', 'gemini-3.5-flash-lite'];
 const KEY_STORAGE = 'chalkcode_gemini_key';
+
+const ATTEMPTS_PER_MODEL = 2;
+const RETRY_DELAY_MS = 1500;
+// Temporary problems worth retrying, plus 404 in case a fallback model isn't offered.
+const RETRYABLE_STATUS = [404, 429, 500, 503];
 
 const els = {
   topic: document.getElementById('topic'),
@@ -104,6 +110,39 @@ function parseResponse(text) {
   return { code, explanation };
 }
 
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Google's free tier sometimes answers "high demand" (503). Retrying, then
+// falling back to another model, makes the app work through those spikes
+// instead of showing an error on the first hiccup.
+async function callGemini(key, prompt) {
+  let lastError = new Error('No response from the model. Try again.');
+
+  for (const model of GEMINI_MODELS) {
+    for (let attempt = 0; attempt < ATTEMPTS_PER_MODEL; attempt++) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+      });
+
+      if (response.ok) return response.json();
+
+      const errBody = await response.json().catch(() => ({}));
+      lastError = new Error(errBody?.error?.message || `Request failed (${response.status})`);
+
+      // Errors like a bad key (400/403) won't fix themselves, so stop right away.
+      if (!RETRYABLE_STATUS.includes(response.status)) throw lastError;
+      await wait(RETRY_DELAY_MS);
+    }
+  }
+
+  throw lastError;
+}
+
 async function generate() {
   const topic = els.topic.value.trim();
   const language = currentLanguage();
@@ -126,23 +165,8 @@ async function generate() {
   els.codeOutput.textContent = '';
   els.explanation.textContent = '';
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`;
-
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: buildPrompt(topic, language, level) }] }],
-      }),
-    });
-
-    if (!response.ok) {
-      const errBody = await response.json().catch(() => ({}));
-      throw new Error(errBody?.error?.message || `Request failed (${response.status})`);
-    }
-
-    const data = await response.json();
+    const data = await callGemini(key, buildPrompt(topic, language, level));
     const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || '';
     if (!text) throw new Error('No response from the model. Try again.');
 
