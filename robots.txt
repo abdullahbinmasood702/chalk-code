@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://abdullahbinmasood702.github.io/chalk-code/sitemap.xml

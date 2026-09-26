@@ -199,3 +199,31 @@ select option {
   font-family: var(--mono);
 }
 .key-dialog-actions { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 1rem; }
+
+.seo-content {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  padding: 2rem clamp(1rem, 4vw, 3rem);
+  color: var(--chalk-white);
+}
+
+.seo-content h1,
+.seo-content h2 {
+  color: var(--chalk-white);
+}
+
+.seo-content h1 {
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  margin-bottom: 1rem;
+}
+
+.seo-content h2 {
+  font-size: 1.2rem;
+  margin-top: 2rem;
+}
+
+.seo-content p {
+  max-width: 850px;
+  color: rgba(241,239,231,0.75);
+  line-height: 1.7;
+}
